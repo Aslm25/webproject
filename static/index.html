@@ -1,0 +1,840 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NeonCode - Modern Web-Based IDE</title>
+    <meta name="description" content="Modern neon-themed code compiler and analyzer with AI capabilities">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>💻</text></svg>">
+    
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+    
+    <!-- Custom CSS -->
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <!-- Loading Screen with Enhanced Neon Effects -->
+    <div id="loading-screen" class="loading-screen">
+        <div class="loading-spinner">
+            <div class="spinner"></div>
+            <p class="glow-text">Loading NeonCode IDE...</p>
+            <div class="loading-progress">
+                <div class="progress-bar"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Header -->
+    <header class="header">
+        <div class="header-left">
+            <div class="logo">
+                <i class="fas fa-code"></i>
+                <span>NeonCode</span>
+            </div>
+        </div>
+        
+        <div class="header-center">
+            <div class="language-selector">
+                <select id="language-select" class="language-select">
+                    <option value="python">🐍 Python</option>
+                    <option value="javascript">🟨 JavaScript</option>
+                    <option value="java">☕ Java</option>
+                    <option value="cpp">⚡ C++</option>
+                    <option value="c">🔧 C</option>
+                    <option value="php">🐘 PHP</option>
+                    <option value="html">🌐 HTML</option>
+                    <option value="css">🎨 CSS</option>
+                    <option value="sql">🗄️ SQL</option>
+                    <option value="json">📋 JSON</option>
+                </select>
+            </div>
+        </div>
+        
+        <div class="header-right">
+            <button id="home-btn" class="icon-btn" title="Home">
+                <i class="fas fa-home"></i>
+            </button>
+            <button id="theme-toggle" class="icon-btn" title="Toggle Theme">
+                <i class="fas fa-palette"></i>
+            </button>
+            <button id="settings-btn" class="icon-btn" title="Settings">
+                <i class="fas fa-cog"></i>
+            </button>
+            <button id="help-btn" class="icon-btn" title="Help">
+                <i class="fas fa-question-circle"></i>
+            </button>
+            <button id="auth-btn" class="btn btn-primary" title="Sign In">
+                <i class="fas fa-user"></i> Sign In
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="main-content">
+        <!-- Sidebar -->
+        <aside class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h3><i class="fas fa-folder-open"></i> Explorer</h3>
+                <button id="sidebar-toggle" class="icon-btn">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            
+            <div class="sidebar-content">
+                <!-- Project Management -->
+                <div class="project-management">
+                    <div class="project-header">
+                        <h4>Projects</h4>
+                        <div class="project-actions">
+                            <button id="new-project-btn" class="icon-btn" title="New Project">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                            <button id="import-project-btn" class="icon-btn" title="Import Project">
+                                <i class="fas fa-upload"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="projects-list" class="projects-list">
+                        <!-- Projects will be populated here -->
+                    </div>
+                </div>
+                
+                <!-- Current Project Files -->
+                <div class="current-project" id="current-project-section" style="display: none;">
+                    <div class="project-header">
+                        <h4 id="current-project-name">Current Project</h4>
+                        <div class="project-actions">
+                            <button id="new-file-btn" class="icon-btn" title="New File">
+                                <i class="fas fa-file-plus"></i>
+                            </button>
+                            <button id="new-folder-btn" class="icon-btn" title="New Folder">
+                                <i class="fas fa-folder-plus"></i>
+                            </button>
+                            <button id="save-project-btn" class="icon-btn" title="Save Project">
+                                <i class="fas fa-save"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div id="project-files-tree" class="project-files-tree">
+                        <!-- Project files tree will be populated here -->
+                    </div>
+                </div>
+                
+                <!-- Code Templates -->
+                <div class="code-templates">
+                    <h4>Templates</h4>
+                    <div class="template-list">
+                        <button class="template-btn" data-template="hello-world">
+                            <i class="fas fa-file-code"></i> Hello World
+                        </button>
+                        <button class="template-btn" data-template="function">
+                            <i class="fas fa-function"></i> Function
+                        </button>
+                        <button class="template-btn" data-template="class">
+                            <i class="fas fa-object-group"></i> Class
+                        </button>
+                        <button class="template-btn" data-template="api">
+                            <i class="fas fa-server"></i> API Endpoint
+                        </button>
+                        <button class="template-btn" data-template="algorithm">
+                            <i class="fas fa-brain"></i> Algorithm
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Editor Area -->
+        <div class="editor-area">
+            <div class="editor-header">
+                <div class="editor-tabs">
+                    <div class="tab active" data-file="main">
+                        <span class="tab-name">main.py</span>
+                        <span class="tab-status unsaved">●</span>
+                        <button class="tab-close">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div class="editor-actions">
+                    <button id="save-current-btn" class="btn btn-success" title="Save Current File">
+                        <i class="fas fa-save"></i> Save
+                    </button>
+                    <button id="run-btn" class="btn btn-primary">
+                        <i class="fas fa-play"></i> Run
+                    </button>
+                    <button id="analyze-btn" class="btn btn-warning">
+                        <i class="fas fa-brain"></i> AI Analyze
+                    </button>
+                    <button id="format-btn" class="btn btn-secondary">
+                        <i class="fas fa-align-left"></i> Format
+                    </button>
+                    <button id="share-btn" class="btn btn-secondary">
+                        <i class="fas fa-share-alt"></i> Share
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Editor Container -->
+            <div class="editor-preview-container">
+                <!-- Monaco Editor Container -->
+                <div id="editor-container" class="editor-container full-width"></div>
+            </div>
+            
+            <!-- Editor Status Bar -->
+            <div class="editor-status">
+                <div class="status-left">
+                    <span id="cursor-position">Ln 1, Col 1</span>
+                    <span id="selection-info"></span>
+                    <span id="file-status" class="file-status">
+                        <i class="fas fa-circle unsaved"></i> Unsaved changes
+                    </span>
+                </div>
+                <div class="status-right">
+                    <span id="language-info">Python</span>
+                    <span id="encoding-info">UTF-8</span>
+                    <span id="file-size">0 bytes</span>
+                    <span id="user-status" class="user-status">
+                        <i class="fas fa-user-slash"></i> Guest
+                    </span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel -->
+        <div class="right-panel">
+            <div class="panel-tabs">
+                <button class="panel-tab active" data-panel="preview" id="preview-tab">
+                    <i class="fas fa-eye"></i> Preview
+                </button>
+                <button class="panel-tab" data-panel="io" id="io-tab">
+                    <i class="fas fa-terminal"></i> I/O
+                </button>
+                <button class="panel-tab" data-panel="files" id="files-tab">
+                    <i class="fas fa-folder"></i> Files
+                </button>
+                <button class="panel-tab" data-panel="analysis" id="analysis-tab">
+                    <i class="fas fa-chart-line"></i> Analysis
+                </button>
+                <button class="panel-tab" data-panel="assistant" id="assistant-tab">
+                    <i class="fas fa-robot"></i> AI Assistant
+                </button>
+            </div>
+            
+            <!-- Live Preview Panel -->
+            <div id="preview-panel" class="panel-content active">
+                <div class="panel-header">
+                    <h3>
+                        <i class="fas fa-eye"></i> Live Preview
+                        <small class="preview-status" id="preview-status">Auto</small>
+                    </h3>
+                    <div class="preview-controls">
+                        <button id="toggle-auto-preview" class="icon-btn active" title="Toggle Auto Preview">
+                            <i class="fas fa-magic"></i>
+                        </button>
+                        <button id="refresh-preview-btn" class="icon-btn" title="Refresh Preview">
+                            <i class="fas fa-sync"></i>
+                        </button>
+                        <button id="fullscreen-preview-btn" class="icon-btn" title="Fullscreen Preview">
+                            <i class="fas fa-expand"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="preview-content" class="preview-content">
+                    <iframe id="preview-iframe" class="preview-iframe" sandbox="allow-scripts allow-forms allow-popups allow-modals allow-same-origin"></iframe>
+                    <div id="preview-placeholder" class="preview-placeholder">
+                        <i class="fas fa-eye"></i>
+                        <h4>Live Preview</h4>
+                        <p>Write HTML/CSS/JS code and see it live here automatically!</p>
+                        <small>Auto-preview is enabled for web languages</small>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Combined Input/Output Panel -->
+            <div id="io-panel" class="panel-content">
+                <div class="io-container">
+                    <!-- Input Section -->
+                    <div class="io-section input-section">
+                        <div class="panel-header">
+                            <h3>Input</h3>
+                            <button id="clear-input-btn" class="icon-btn" title="Clear Input">
+                                <i class="fas fa-trash"></i>
+                            </button>
+                        </div>
+                        <textarea id="input-textarea" class="input-textarea" placeholder="Enter input for your program here..."></textarea>
+                    </div>
+                    
+                    <!-- Output Section -->
+                    <div class="io-section output-section">
+                        <div class="panel-header">
+                            <h3>Output</h3>
+                            <div class="output-controls">
+                                <button id="clear-output-btn" class="icon-btn" title="Clear Output">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                                <button id="copy-output-btn" class="icon-btn" title="Copy Output">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div id="output-content" class="output-content">
+                            <div class="output-placeholder">
+                                <i class="fas fa-play-circle"></i>
+                                <p>Click "Run" to execute your code</p>
+                                <small>Output, errors, and execution details will appear here</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Files Panel -->
+            <div id="files-panel" class="panel-content">
+                <div class="panel-header">
+                    <h3>Session Files</h3>
+                    <div class="file-controls">
+                        <button id="upload-file-btn" class="btn btn-sm btn-primary">
+                            <i class="fas fa-upload"></i> Upload
+                        </button>
+                        <button id="create-new-file-btn" class="btn btn-sm btn-success">
+                            <i class="fas fa-plus"></i> New File
+                        </button>
+                    </div>
+                </div>
+                <div class="file-list-container">
+                    <div id="session-files-list" class="session-files-list">
+                        <!-- Session files will be populated here -->
+                    </div>
+                </div>
+                <div class="file-actions-panel">
+                    <button id="download-all-btn" class="btn btn-sm btn-secondary">
+                        <i class="fas fa-download"></i> Download All
+                    </button>
+                    <button id="export-project-btn" class="btn btn-sm btn-secondary">
+                        <i class="fas fa-file-export"></i> Export Project
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Analysis Panel -->
+            <div id="analysis-panel" class="panel-content">
+                <div class="panel-header">
+                    <h3>AI Code Analysis</h3>
+                    <div class="analysis-controls">
+                        <button id="refresh-analysis-btn" class="icon-btn" title="Refresh Analysis">
+                            <i class="fas fa-sync"></i>
+                        </button>
+                        <button id="export-analysis-btn" class="icon-btn" title="Export Analysis">
+                            <i class="fas fa-file-export"></i>
+                        </button>
+                    </div>
+                </div>
+                <div id="analysis-content" class="analysis-content">
+                    <div class="analysis-placeholder">
+                        <i class="fas fa-brain"></i>
+                        <p>Click "AI Analyze" to get intelligent insights about your code</p>
+                        <small>Get suggestions for improvements, error detection, and best practices</small>
+                    </div>
+                </div>
+                
+                <!-- Analysis Categories -->
+                <div id="analysis-categories" class="analysis-categories" style="display: none;">
+                    <div class="analysis-category">
+                        <div class="category-header">
+                            <i class="fas fa-exclamation-triangle text-neon-orange"></i>
+                            <span>Issues Found</span>
+                            <span id="issues-count" class="badge">0</span>
+                        </div>
+                        <div id="issues-list" class="category-content"></div>
+                    </div>
+                    
+                    <div class="analysis-category">
+                        <div class="category-header">
+                            <i class="fas fa-lightbulb text-neon-cyan"></i>
+                            <span>Suggestions</span>
+                            <span id="suggestions-count" class="badge">0</span>
+                        </div>
+                        <div id="suggestions-list" class="category-content"></div>
+                    </div>
+                    
+                    <div class="analysis-category">
+                        <div class="category-header">
+                            <i class="fas fa-tachometer-alt text-neon-green"></i>
+                            <span>Performance</span>
+                        </div>
+                        <div id="performance-analysis" class="category-content"></div>
+                    </div>
+                    
+                    <div class="analysis-category">
+                        <div class="category-header">
+                            <i class="fas fa-shield-alt text-neon-purple"></i>
+                            <span>Security</span>
+                        </div>
+                        <div id="security-analysis" class="category-content"></div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- AI Assistant Panel -->
+            <div id="assistant-panel" class="panel-content">
+                <div class="panel-header">
+                    <h3>AI Assistant</h3>
+                    <div class="assistant-controls">
+                        <button id="clear-chat-btn" class="icon-btn" title="Clear Chat">
+                            <i class="fas fa-trash"></i>
+                        </button>
+                        <button id="assistant-settings-btn" class="icon-btn" title="Assistant Settings">
+                            <i class="fas fa-cog"></i>
+                        </button>
+                    </div>
+                </div>
+                
+                <div id="chat-container" class="chat-container">
+                    <div class="chat-messages" id="chat-messages">
+                        <div class="assistant-message">
+                            <div class="message-avatar">
+                                <i class="fas fa-robot"></i>
+                            </div>
+                            <div class="message-content">
+                                <p>Hello! I'm your AI coding assistant. I can help you with:</p>
+                                <ul>
+                                    <li>Code review and optimization</li>
+                                    <li>Bug detection and fixes</li>
+                                    <li>Explaining code concepts</li>
+                                    <li>Suggesting improvements</li>
+                                    <li>Writing documentation</li>
+                                    <li>Algorithm design</li>
+                                </ul>
+                                <p>Just ask me anything about your code!</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="chat-input-container">
+                        <div class="quick-actions">
+                            <button class="quick-action-btn" data-action="explain">
+                                <i class="fas fa-question-circle"></i> Explain Code
+                            </button>
+                            <button class="quick-action-btn" data-action="optimize">
+                                <i class="fas fa-rocket"></i> Optimize
+                            </button>
+                            <button class="quick-action-btn" data-action="debug">
+                                <i class="fas fa-bug"></i> Debug
+                            </button>
+                            <button class="quick-action-btn" data-action="document">
+                                <i class="fas fa-file-alt"></i> Document
+                            </button>
+                        </div>
+                        
+                        <div class="chat-input-wrapper">
+                            <textarea id="chat-input" class="chat-input" placeholder="Ask me anything about your code..." rows="2"></textarea>
+                            <button id="send-message-btn" class="send-btn">
+                                <i class="fas fa-paper-plane"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Mobile Menu Toggle -->
+    <button id="mobile-menu-toggle" class="mobile-menu-toggle">
+        <i class="fas fa-bars"></i>
+    </button>
+
+    <!-- Authentication Modal -->
+    <div id="auth-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Sign In to NeonCode</h2>
+                <button class="modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div id="auth-tabs" class="auth-tabs">
+                    <button class="auth-tab active" data-tab="signin">Sign In</button>
+                    <button class="auth-tab" data-tab="signup">Sign Up</button>
+                </div>
+                
+                <div id="signin-form" class="auth-form active">
+                    <div class="form-group">
+                        <label for="signin-email">Email</label>
+                        <input type="email" id="signin-email" class="form-input" placeholder="Enter your email">
+                    </div>
+                    <div class="form-group">
+                        <label for="signin-password">Password</label>
+                        <input type="password" id="signin-password" class="form-input" placeholder="Enter your password">
+                    </div>
+                    <button id="signin-btn" class="btn btn-primary full-width">
+                        <i class="fas fa-sign-in-alt"></i> Sign In
+                    </button>
+                    <p class="auth-link">Don't have an account? <a href="#" onclick="switchAuthTab('signup')">Sign up here</a></p>
+                </div>
+                
+                <div id="signup-form" class="auth-form">
+                    <div class="form-group">
+                        <label for="signup-name">Full Name</label>
+                        <input type="text" id="signup-name" class="form-input" placeholder="Enter your full name">
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-email">Email</label>
+                        <input type="email" id="signup-email" class="form-input" placeholder="Enter your email">
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-password">Password</label>
+                        <input type="password" id="signup-password" class="form-input" placeholder="Create a password">
+                    </div>
+                    <div class="form-group">
+                        <label for="signup-confirm">Confirm Password</label>
+                        <input type="password" id="signup-confirm" class="form-input" placeholder="Confirm your password">
+                    </div>
+                    <button id="signup-btn" class="btn btn-primary full-width">
+                        <i class="fas fa-user-plus"></i> Sign Up
+                    </button>
+                    <p class="auth-link">Already have an account? <a href="#" onclick="switchAuthTab('signin')">Sign in here</a></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Settings Modal -->
+    <div id="settings-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Settings</h2>
+                <button class="modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="setting-group">
+                    <label for="font-size-slider">Font Size</label>
+                    <input type="range" id="font-size-slider" min="10" max="24" value="14">
+                    <span id="font-size-value">14px</span>
+                </div>
+                
+                <div class="setting-group">
+                    <label>
+                        <input type="checkbox" id="word-wrap-toggle"> Word Wrap
+                    </label>
+                </div>
+                
+                <div class="setting-group">
+                    <label>
+                        <input type="checkbox" id="line-numbers-toggle" checked> Line Numbers
+                    </label>
+                </div>
+                
+                <div class="setting-group">
+                    <label>
+                        <input type="checkbox" id="auto-save-toggle" checked> Auto Save
+                    </label>
+                </div>
+                
+                <div class="setting-group">
+                    <label>
+                        <input type="checkbox" id="minimap-toggle" checked> Minimap
+                    </label>
+                </div>
+                
+                <div class="setting-group">
+                    <label for="theme-select">Editor Theme</label>
+                    <select id="theme-select" class="form-input">
+                        <option value="vs-dark">Dark</option>
+                        <option value="vs">Light</option>
+                        <option value="hc-black">High Contrast</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" id="reset-settings-btn">Reset</button>
+                <button class="btn btn-primary" id="save-settings-btn">Save</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Help Modal -->
+    <div id="help-modal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Help & Shortcuts</h2>
+                <button class="modal-close">
+                    <i class="fas fa-times"></i>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="help-section">
+                    <h3>Keyboard Shortcuts</h3>
+                    <div class="shortcut-list">
+                        <div class="shortcut-item">
+                            <kbd>Ctrl</kbd> + <kbd>Enter</kbd>
+                            <span>Run Code</span>
+                        </div>
+                        <div class="shortcut-item">
+                            <kbd>Ctrl</kbd> + <kbd>S</kbd>
+                            <span>Save File</span>
+                        </div>
+                        <div class="shortcut-item">
+                            <kbd>Ctrl</kbd> + <kbd>/</kbd>
+                            <span>Toggle Comment</span>
+                        </div>
+                        <div class="shortcut-item">
+                            <kbd>Ctrl</kbd> + <kbd>Shift</kbd> + <kbd>P</kbd>
+                            <span>Command Palette</span>
+                        </div>
+                        <div class="shortcut-item">
+                            <kbd>F11</kbd>
+                            <span>Toggle Fullscreen</span>
+                        </div>
+                        <div class="shortcut-item">
+                            <kbd>Ctrl</kbd> + <kbd>D</kbd>
+                            <span>Duplicate Line</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="help-section">
+                    <h3>Features</h3>
+                    <ul>
+                        <li>Multi-language code editing with syntax highlighting</li>
+                        <li>AI-powered code analysis and suggestions</li>
+                        <li>Real-time error detection and debugging</li>
+                        <li>Live preview for web technologies</li>
+                        <li>Project management and file organization</li>
+                        <li>Code formatting and auto-completion</li>
+                        <li>Session-based file management</li>
+                        <li>Export and import projects</li>
+                    </ul>
+                </div>
+                
+                <div class="help-section">
+                    <h3>Supported Languages</h3>
+                    <div class="language-grid">
+                        <span class="language-tag">Python</span>
+                        <span class="language-tag">JavaScript</span>
+                        <span class="language-tag">Java</span>
+                        <span class="language-tag">C++</span>
+                        <span class="language-tag">C</span>
+                        <span class="language-tag">PHP</span>
+                        <span class="language-tag">HTML</span>
+                        <span class="language-tag">CSS</span>
+                        <span class="language-tag">SQL</span>
+                        <span class="language-tag">JSON</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notifications -->
+    <div id="toast-container" class="toast-container"></div>
+
+    <!-- Custom JavaScript -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/monaco-editor/0.44.0/min/vs/loader.min.js"></script>
+    <script src="app.js"></script>
+    
+    <style>
+        /* Additional styles for enhanced features */
+        .loading-progress {
+            width: 200px;
+            height: 4px;
+            background: var(--bg-tertiary);
+            border-radius: 2px;
+            margin-top: var(--spacing-md);
+            overflow: hidden;
+        }
+        
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--neon-cyan), var(--neon-pink));
+            width: 0%;
+            animation: loadingProgress 2s ease-in-out;
+            box-shadow: 0 0 10px var(--neon-cyan);
+        }
+        
+        @keyframes loadingProgress {
+            0% { width: 0%; }
+            50% { width: 70%; }
+            100% { width: 100%; }
+        }
+        
+        .auth-tabs {
+            display: flex;
+            margin-bottom: var(--spacing-lg);
+            border-bottom: 1px solid var(--border-color);
+        }
+        
+        .auth-tab {
+            flex: 1;
+            padding: var(--spacing-md);
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            cursor: pointer;
+            transition: all var(--transition-fast);
+            border-bottom: 2px solid transparent;
+        }
+        
+        .auth-tab.active {
+            color: var(--neon-cyan);
+            border-bottom-color: var(--neon-cyan);
+        }
+        
+        .auth-form {
+            display: none;
+        }
+        
+        .auth-form.active {
+            display: block;
+        }
+        
+        .form-group {
+            margin-bottom: var(--spacing-lg);
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: var(--spacing-sm);
+            color: var(--text-primary);
+            font-weight: 500;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: var(--spacing-md);
+            border: 2px solid var(--border-color);
+            border-radius: var(--radius-md);
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            font-size: 1rem;
+            transition: all var(--transition-fast);
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: var(--neon-cyan);
+            box-shadow: 0 0 20px rgba(0, 255, 255, 0.3);
+        }
+        
+        .full-width {
+            width: 100%;
+        }
+        
+        .auth-link {
+            text-align: center;
+            margin-top: var(--spacing-lg);
+            color: var(--text-secondary);
+        }
+        
+        .auth-link a {
+            color: var(--neon-cyan);
+            text-decoration: none;
+        }
+        
+        .auth-link a:hover {
+            text-decoration: underline;
+        }
+        
+        .user-status {
+            display: flex;
+            align-items: center;
+            gap: var(--spacing-xs);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            background: var(--bg-card);
+            border-radius: var(--radius-sm);
+            border: 1px solid var(--border-color);
+        }
+        
+        .user-status.authenticated {
+            border-color: var(--neon-green);
+            color: var(--neon-green);
+        }
+        
+        .language-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+            gap: var(--spacing-sm);
+        }
+        
+        .language-tag {
+            padding: var(--spacing-xs) var(--spacing-sm);
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            text-align: center;
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+        
+        .shortcut-list {
+            display: flex;
+            flex-direction: column;
+            gap: var(--spacing-sm);
+        }
+        
+        .shortcut-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: var(--spacing-sm);
+            background: var(--bg-card);
+            border-radius: var(--radius-md);
+            border: 1px solid var(--border-color);
+        }
+        
+        kbd {
+            background: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: var(--spacing-xs) var(--spacing-sm);
+            font-size: 0.8rem;
+            font-family: monospace;
+            color: var(--neon-cyan);
+            box-shadow: 0 0 5px rgba(0, 255, 255, 0.2);
+        }
+        
+        .help-section {
+            margin-bottom: var(--spacing-xl);
+        }
+        
+        .help-section h3 {
+            margin-bottom: var(--spacing-md);
+            color: var(--neon-cyan);
+            text-shadow: 0 0 5px var(--neon-cyan);
+        }
+        
+        .help-section ul {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .help-section li {
+            padding: var(--spacing-xs) 0;
+            color: var(--text-secondary);
+            position: relative;
+            padding-left: var(--spacing-lg);
+        }
+        
+        .help-section li:before {
+            content: '▶';
+            position: absolute;
+            left: 0;
+            color: var(--neon-cyan);
+        }
+    </style>
+</body>
+</html>
+
